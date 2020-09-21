@@ -3,7 +3,7 @@
   "version": "0.0.0-development",
   "description": "Run Cypress multiple times in a row",
   "bin": {
-    "cypress-expect": "index.js"
+    "cypress-repeat": "index.js"
   },
   "files": [
     "index.js"

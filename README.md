@@ -2,6 +2,22 @@
 
 > Run Cypress multiple times in a row
 
+## Install and use
+
+```shell
+npm i -D cypress-repeat
+# or using Yarn
+yarn add -D cypress-repeat
+```
+
+Assuming `cypress` has been installed
+
+```shell
+npx cypress-repeat run -n <N> ... rest of "cypress run" arguments
+```
+
+Which will run Cypresss `<N>` times, exiting after the first failed run or after all runs finish successfully.
+
 ## Debugging
 
 Run this script with environment variable `DEBUG=cypress-repeat` to see verbose logs
