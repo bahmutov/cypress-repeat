@@ -1,6 +1,6 @@
 # cypress-repeat [![ci status][ci image]][ci url] [![renovate-app badge][renovate-badge]][renovate-app]
 
-> Run Cypress multiple times in a row
+> Run Cypress multiple times in a row, great at finding test flake
 
 ## Install and use
 

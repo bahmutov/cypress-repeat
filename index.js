@@ -65,6 +65,7 @@ parseArguments()
     return allRunOptions
   })
   .then((allRunOptions) => {
+    // @ts-ignore
     return Bluebird.mapSeries(allRunOptions, (runOptions, k, n) => {
       console.log('***** repeat %d of %d *****', k + 1, n)
 
