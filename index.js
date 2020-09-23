@@ -10,9 +10,12 @@ const Bluebird = require('bluebird')
 // if there is an .env file, lots it and add to process.env
 require('dotenv').config()
 
-const args = arg({
-  '-n': Number,
-})
+const args = arg(
+  {
+    '-n': Number,
+  },
+  { permissive: true },
+)
 
 const repeatNtimes = args['-n'] ? args['-n'] : 1
 
