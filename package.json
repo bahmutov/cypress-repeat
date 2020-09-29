@@ -28,7 +28,7 @@
   "homepage": "https://github.com/bahmutov/cypress-repeat#readme",
   "devDependencies": {
     "@types/node": "14.10.1",
-    "cypress": "5.2.0",
+    "cypress": "5.3.0",
     "prettier": "2.1.1",
     "semantic-release": "^17.1.2"
   },
@@ -39,7 +39,7 @@
     "dotenv": "8.2.0"
   },
   "peerDependencies": {
-    "cypress": "*"
+    "cypress": ">=5.3.0"
   },
   "release": {
     "branches": "main"

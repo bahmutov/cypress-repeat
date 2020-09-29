@@ -69,15 +69,22 @@ parseArguments()
     return Bluebird.mapSeries(allRunOptions, (runOptions, k, n) => {
       console.log('***** repeat %d of %d *****', k + 1, n)
 
+      /**
+       * @type {(testResults: CypressCommandLine.CypressRunResult | CypressCommandLine.CypressFailedRunResult) => void}
+       */
       const onTestResults = (testResults) => {
-        if (testResults.failures) {
-          console.error(testResults.message)
-          process.exit(testResults.failures)
+        if (testResults.status === 'failed') {
+          if (testResults.failures) {
+            console.error(testResults.message)
+            return process.exit(testResults.failures)
+          }
         }
 
-        if (testResults.totalFailed) {
-          console.error('run %d of %d failed', k + 1, n)
-          process.exit(testResults.totalFailed)
+        if (testResults.status === 'finished') {
+          if (testResults.totalFailed) {
+            console.error('run %d of %d failed', k + 1, n)
+            process.exit(testResults.totalFailed)
+          }
         }
       }
 
