@@ -2,6 +2,8 @@
 
 > Run Cypress multiple times in a row, great at finding test flake
 
+Read [Wrap Cypress Using NPM Module API](https://glebbahmutov.com/blog/wrap-cypress-using-npm/)
+
 ## Install and use
 
 ```shell
