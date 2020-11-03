@@ -56,6 +56,15 @@ parseArguments()
     for (let k = 0; k < repeatNtimes; k += 1) {
       const runOptions = clone(options)
 
+      const envVariables = `cypress_repeat_n=${repeatNtimes},cypress_repeat_k=${
+        k + 1
+      }`
+      if (!('env' in runOptions)) {
+        runOptions.env = envVariables
+      } else {
+        runOptions.env += ',' + envVariables
+      }
+
       if (options.record && options.group) {
         // we are recording, thus we need to update the group name
         // to avoid clashing

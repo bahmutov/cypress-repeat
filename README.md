@@ -30,6 +30,16 @@ You can flip the logic and run Cypress up to N times until the first successful 
 npx cypress-repeat run -n <N> --until-passes ... rest of "cypress run" arguments
 ```
 
+### Env variables
+
+Every run has two utility variables injected
+
+```js
+const n = Cypress.env('cypress_repeat_n') // total repeat attempts
+const k = Cypress.env('cypress_repeat_k') // current attempt, starts with 1
+                                          // and is <= n
+```
+
 ## Debugging
 
 Run this script with environment variable `DEBUG=cypress-repeat` to see verbose logs

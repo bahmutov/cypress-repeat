@@ -18,4 +18,13 @@ describe('cypress-repeat', () => {
     // if you want randomly fail
     // expect(Math.random(), 'random float').to.be.lessThan(0.4)
   })
+
+  it('has injected environment variables', () => {
+    const n = Cypress.env('cypress_repeat_n') // total repeat attempts
+    const k = Cypress.env('cypress_repeat_k') // current attempt, starts with 1
+
+    expect(n, 'n').to.be.a('number').and.be.gt(0)
+    expect(k, 'k').to.be.a('number').and.be.gt(0)
+    expect(k, 'k <= n').to.be.lte(n)
+  })
 })
