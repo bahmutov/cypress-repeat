@@ -10,7 +10,13 @@ jobs:
       - name: Run Cypress twice 🧪
         uses: cypress-io/github-action@v2
         with:
-          command: node . run
+          command: npm run demo:twice
+
+      - name: Passes on first try of 2 🧪
+        uses: cypress-io/github-action@v2
+        with:
+          install: false
+          command: npm run demo:until-passes
 
       - name: Semantic Release 🚀
         uses: cycjimmy/semantic-release-action@v2

@@ -4,7 +4,7 @@
 
 Read [Wrap Cypress Using NPM Module API](https://glebbahmutov.com/blog/wrap-cypress-using-npm/)
 
-## Install and use
+## Install
 
 ```shell
 npm i -D cypress-repeat
@@ -12,13 +12,23 @@ npm i -D cypress-repeat
 yarn add -D cypress-repeat
 ```
 
-Assuming `cypress` has been installed
+This module assumes the `cypress` dependency v5.3.0+ has been installed.
+
+## Use
 
 ```shell
 npx cypress-repeat run -n <N> ... rest of "cypress run" arguments
 ```
 
 Which will run Cypresss `<N>` times, exiting after the first failed run or after all runs finish successfully.
+
+### Until passes
+
+You can flip the logic and run Cypress up to N times until the first successful exit
+
+```shell
+npx cypress-repeat run -n <N> --until-passes ... rest of "cypress run" arguments
+```
 
 ## Debugging
 

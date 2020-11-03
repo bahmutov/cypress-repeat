@@ -13,13 +13,19 @@ require('dotenv').config()
 const args = arg(
   {
     '-n': Number,
+    '--until-passes': Boolean,
   },
   { permissive: true },
 )
 
-const repeatNtimes = args['-n'] ? args['-n'] : 1
+const name = 'cypress-repeat:'
+const repeatNtimes = '-n' in args ? args['-n'] : 1
+const untilPasses = '--until-passes' in args ? args['--until-passes'] : false
 
-console.log('will repeat Cypress run %d time(s)', repeatNtimes)
+console.log('%s will repeat Cypress run %d time(s)', name, repeatNtimes)
+if (untilPasses) {
+  console.log('%s but only until it passes', name)
+}
 
 /**
  * Quick and dirty deep clone
@@ -70,13 +76,14 @@ parseArguments()
   .then((allRunOptions) => {
     // @ts-ignore
     return Bluebird.mapSeries(allRunOptions, (runOptions, k, n) => {
-      console.log('***** repeat %d of %d *****', k + 1, n)
+      console.log('***** %s %d of %d *****', name, k + 1, n)
 
       /**
        * @type {(testResults: CypressCommandLine.CypressRunResult | CypressCommandLine.CypressFailedRunResult) => void}
        */
       const onTestResults = (testResults) => {
         if (testResults.status === 'failed') {
+          // failed to even run Cypress tests
           if (testResults.failures) {
             console.error(testResults.message)
             return process.exit(testResults.failures)
@@ -84,9 +91,26 @@ parseArguments()
         }
 
         if (testResults.status === 'finished') {
-          if (testResults.totalFailed) {
-            console.error('run %d of %d failed', k + 1, n)
-            process.exit(testResults.totalFailed)
+          if (untilPasses) {
+            if (!testResults.totalFailed) {
+              console.log(
+                '%s successfully passed on run %d of %d',
+                name,
+                k + 1,
+                n,
+              )
+              process.exit(0)
+            }
+            console.error('%s run %d of %d failed', name, k + 1, n)
+            if (k === n - 1) {
+              console.error('%s no more attempts left', name)
+              process.exit(testResults.totalFailed)
+            }
+          } else {
+            if (testResults.totalFailed) {
+              console.error('%s run %d of %d failed', name, k + 1, n)
+              process.exit(testResults.totalFailed)
+            }
           }
         }
       }
