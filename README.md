@@ -44,6 +44,10 @@ const k = Cypress.env('cypress_repeat_k') // current attempt, starts with 1
 
 Run this script with environment variable `DEBUG=cypress-repeat` to see verbose logs
 
+## What about test retries?
+
+This NPM module retries the entire Cypress run, if you need to retry just the failed tests, use the [Test Retries](https://docs.cypress.io/guides/guides/test-retries).
+
 [ci image]: https://github.com/bahmutov/cypress-repeat/workflows/ci/badge.svg?branch=main
 [ci url]: https://github.com/bahmutov/cypress-repeat/actions
 [renovate-badge]: https://img.shields.io/badge/renovate-app-blue.svg
