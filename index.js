@@ -2,14 +2,19 @@
 
 // @ts-check
 
-const cypress = require('cypress')
 const debug = require('debug')('cypress-repeat')
+
+// allows us to debug any cypress install problems
+debug('requiring cypress with module.paths %o', module.paths)
+const cypress = require('cypress')
+
 const arg = require('arg')
 const Bluebird = require('bluebird')
 
 // if there is an .env file, lots it and add to process.env
 require('dotenv').config()
 
+debug('process argv %o', process.argv)
 const args = arg(
   {
     '-n': Number,
@@ -17,12 +22,13 @@ const args = arg(
   },
   { permissive: true },
 )
+debug('parsed args %o', args)
 
 const name = 'cypress-repeat:'
 const repeatNtimes = '-n' in args ? args['-n'] : 1
 const untilPasses = '--until-passes' in args ? args['--until-passes'] : false
 
-console.log('%s will repeat Cypress run %d time(s)', name, repeatNtimes)
+console.log('%s will repeat Cypress command %d time(s)', name, repeatNtimes)
 if (untilPasses) {
   console.log('%s but only until it passes', name)
 }
