@@ -29,6 +29,13 @@ You can flip the logic and run Cypress up to N times until the first successful 
 ```shell
 npx cypress-repeat run -n <N> --until-passes ... rest of "cypress run" arguments
 ```
+### Rerun only failed Specs
+
+You can rerun only the specs that failed
+
+```shell
+npx cypress-repeat run -n <N> --until-passes --rerun-failed-only ... rest of "cypress run" arguments
+```
 
 ### Env variables
 

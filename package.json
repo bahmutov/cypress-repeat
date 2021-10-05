@@ -12,6 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "demo:twice": "node . run -n 2",
     "demo:until-passes": "node . run -n 2 --until-passes",
+    "demo:rerun-failed-only": "node . run -n 2 --rerun-failed-only",
     "semantic-release": "semantic-release"
   },
   "repository": {
@@ -30,7 +31,7 @@
   "homepage": "https://github.com/bahmutov/cypress-repeat#readme",
   "devDependencies": {
     "@types/node": "14.10.1",
-    "cypress": "7.7.0",
+    "cypress": "^8.5.0",
     "prettier": "2.1.1",
     "semantic-release": "^17.1.2"
   },

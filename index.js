@@ -16,21 +16,26 @@ require('dotenv').config()
 
 debug('process argv %o', process.argv)
 const args = arg(
-  {
-    '-n': Number,
-    '--until-passes': Boolean,
-  },
-  { permissive: true },
+    {
+      '-n': Number,
+      '--until-passes': Boolean,
+      '--rerun-failed-only': Boolean,
+    },
+    { permissive: true },
 )
-debug('parsed args %o', args)
-
 const name = 'cypress-repeat:'
 const repeatNtimes = '-n' in args ? args['-n'] : 1
 const untilPasses = '--until-passes' in args ? args['--until-passes'] : false
+const rerunFailedOnly = '--rerun-failed-only' in args ? args['--rerun-failed-only'] : false
 
 console.log('%s will repeat Cypress command %d time(s)', name, repeatNtimes)
+
 if (untilPasses) {
   console.log('%s but only until it passes', name)
+}
+
+if (rerunFailedOnly) {
+  console.log('it only reruns specs which have failed', name)
 }
 
 /**
@@ -97,6 +102,16 @@ parseArguments()
        * @type {(testResults: CypressCommandLine.CypressRunResult | CypressCommandLine.CypressFailedRunResult) => void}
        */
       const onTestResults = (testResults) => {
+        if (rerunFailedOnly && k + 1 !== n) {
+          const failedSpecs = testResults.runs
+              .filter((run) => run.stats.failures != 0)
+              .map((run) => run.spec.relative)
+              .join(',');
+
+          console.log(failedSpecs);
+          allRunOptions[k + 1].spec = failedSpecs;
+        }
+
         if (testResults.status === 'failed') {
           // failed to even run Cypress tests
           if (testResults.failures) {
