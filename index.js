@@ -16,17 +16,18 @@ require('dotenv').config()
 
 debug('process argv %o', process.argv)
 const args = arg(
-    {
-      '-n': Number,
-      '--until-passes': Boolean,
-      '--rerun-failed-only': Boolean,
-    },
-    { permissive: true },
+  {
+    '-n': Number,
+    '--until-passes': Boolean,
+    '--rerun-failed-only': Boolean,
+  },
+  { permissive: true },
 )
 const name = 'cypress-repeat:'
 const repeatNtimes = '-n' in args ? args['-n'] : 1
 const untilPasses = '--until-passes' in args ? args['--until-passes'] : false
-const rerunFailedOnly = '--rerun-failed-only' in args ? args['--rerun-failed-only'] : false
+const rerunFailedOnly =
+  '--rerun-failed-only' in args ? args['--rerun-failed-only'] : false
 
 console.log('%s will repeat Cypress command %d time(s)', name, repeatNtimes)
 
@@ -35,7 +36,7 @@ if (untilPasses) {
 }
 
 if (rerunFailedOnly) {
-  console.log('it only reruns specs which have failed', name)
+  console.log('%s it only reruns specs which have failed', name)
 }
 
 /**
@@ -96,20 +97,27 @@ parseArguments()
   .then((allRunOptions) => {
     // @ts-ignore
     return Bluebird.mapSeries(allRunOptions, (runOptions, k, n) => {
+      const isLastRun = k === n - 1
       console.log('***** %s %d of %d *****', name, k + 1, n)
 
       /**
        * @type {(testResults: CypressCommandLine.CypressRunResult | CypressCommandLine.CypressFailedRunResult) => void}
        */
       const onTestResults = (testResults) => {
-        if (rerunFailedOnly && k + 1 !== n) {
+        debug('is %d the last run? %o', k, isLastRun)
+        if (rerunFailedOnly && !isLastRun) {
           const failedSpecs = testResults.runs
-              .filter((run) => run.stats.failures != 0)
-              .map((run) => run.spec.relative)
-              .join(',');
+            .filter((run) => run.stats.failures != 0)
+            .map((run) => run.spec.relative)
+            .join(',')
 
-          console.log(failedSpecs);
-          allRunOptions[k + 1].spec = failedSpecs;
+          if (failedSpecs.length) {
+            console.log('%s failed specs', name)
+            console.log(failedSpecs)
+            allRunOptions[k + 1].spec = failedSpecs
+          } else {
+            console.log('%s there were no failed specs', name)
+          }
         }
 
         if (testResults.status === 'failed') {
@@ -139,7 +147,9 @@ parseArguments()
           } else {
             if (testResults.totalFailed) {
               console.error('%s run %d of %d failed', name, k + 1, n)
-              process.exit(testResults.totalFailed)
+              if (!rerunFailedOnly || isLastRun) {
+                process.exit(testResults.totalFailed)
+              }
             }
           }
         }
