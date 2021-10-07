@@ -18,6 +18,9 @@ jobs:
           install: false
           command: npm run demo:until-passes
 
+      # TODO: find a way to verify a failed run
+      # or the overall number of runs it takes
+
       - name: Semantic Release 🚀
         uses: cycjimmy/semantic-release-action@v2
         env:

@@ -117,6 +117,8 @@ parseArguments()
             allRunOptions[k + 1].spec = failedSpecs
           } else {
             console.log('%s there were no failed specs', name)
+            console.log('%s exiting', name)
+            process.exit(0)
           }
         }
 
