@@ -108,7 +108,7 @@ parseArguments()
         if (rerunFailedOnly && !isLastRun) {
           const failedSpecs = testResults.runs
             .filter((run) => run.stats.failures != 0)
-            .map((run) => run.spec.relative)
+            .map((run) => run.spec.absolute)
             .join(',')
 
           if (failedSpecs.length) {
