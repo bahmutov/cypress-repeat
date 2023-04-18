@@ -20,6 +20,7 @@ const args = arg(
     '-n': Number,
     '--until-passes': Boolean,
     '--rerun-failed-only': Boolean,
+    '--allow-post-hook': Boolean,
   },
   { permissive: true },
 )
@@ -29,6 +30,8 @@ const untilPasses = '--until-passes' in args ? args['--until-passes'] : false
 const rerunFailedOnly =
   '--rerun-failed-only' in args ? args['--rerun-failed-only'] : false
 
+const allowPostHook = '--allow-post-hook' in args ? args['--allow-post-hook'] : false
+
 console.log('%s will repeat Cypress command %d time(s)', name, repeatNtimes)
 
 if (untilPasses) {
@@ -37,6 +40,10 @@ if (untilPasses) {
 
 if (rerunFailedOnly) {
   console.log('%s it only reruns specs which have failed', name)
+}
+
+if (allowPostHook) {
+  console.log('%s allow post-hook scripts to run after failing tests', name)
 }
 
 /**
@@ -144,13 +151,14 @@ parseArguments()
             console.error('%s run %d of %d failed', name, k + 1, n)
             if (k === n - 1) {
               console.error('%s no more attempts left', name)
-              process.exit(testResults.totalFailed)
+              allowPostHook ? process.exit(0): process.exit(testResults.totalFailed)
+              
             }
           } else {
             if (testResults.totalFailed) {
               console.error('%s run %d of %d failed', name, k + 1, n)
               if (!rerunFailedOnly || isLastRun) {
-                process.exit(testResults.totalFailed)
+                allowPostHook ? process.exit(0): process.exit(testResults.totalFailed)
               }
             }
           }
