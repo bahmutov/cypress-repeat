@@ -130,28 +130,26 @@ parseArguments()
           }
         }
 
-        if (testResults.status === 'finished') {
-          if (untilPasses) {
-            if (!testResults.totalFailed) {
-              console.log(
-                '%s successfully passed on run %d of %d',
-                name,
-                k + 1,
-                n,
-              )
-              process.exit(0)
-            }
+        if (untilPasses) {
+          if (!testResults.totalFailed) {
+            console.log(
+              '%s successfully passed on run %d of %d',
+              name,
+              k + 1,
+              n,
+            )
+            process.exit(0)
+          }
+          console.error('%s run %d of %d failed', name, k + 1, n)
+          if (k === n - 1) {
+            console.error('%s no more attempts left', name)
+            process.exit(testResults.totalFailed)
+          }
+        } else {
+          if (testResults.totalFailed) {
             console.error('%s run %d of %d failed', name, k + 1, n)
-            if (k === n - 1) {
-              console.error('%s no more attempts left', name)
+            if (!rerunFailedOnly || isLastRun) {
               process.exit(testResults.totalFailed)
-            }
-          } else {
-            if (testResults.totalFailed) {
-              console.error('%s run %d of %d failed', name, k + 1, n)
-              if (!rerunFailedOnly || isLastRun) {
-                process.exit(testResults.totalFailed)
-              }
             }
           }
         }
