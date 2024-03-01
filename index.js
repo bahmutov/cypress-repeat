@@ -45,6 +45,8 @@ if (forceContinue) {
   console.log('%s will force continue through all iterations', name)
 }
 
+let anyTestFailed = false;
+
 /**
  * Quick and dirty deep clone
  */
@@ -134,6 +136,7 @@ parseArguments()
           // failed to even run Cypress tests
           if (testResults.failures) {
             console.error(testResults.message)
+            anyTestFailed = true;
             if (!forceContinue) {
               return process.exit(testResults.failures)
             }
@@ -169,7 +172,12 @@ parseArguments()
     })
   })
   .then(() => {
-    console.log('***** finished %d run(s) successfully *****', repeatNtimes)
+    if (anyTestFailed) {
+      console.error('***** Some tests failed during the run(s) *****');
+      process.exit(1);
+    } else {
+      console.log('***** finished %d run(s) successfully *****', repeatNtimes);
+    }
   })
   .catch((e) => {
     console.log('error: %s', e.message)
