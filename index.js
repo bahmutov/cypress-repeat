@@ -20,6 +20,7 @@ const args = arg(
     '-n': Number,
     '--until-passes': Boolean,
     '--rerun-failed-only': Boolean,
+    '--force': Boolean,
   },
   { permissive: true },
 )
@@ -28,6 +29,7 @@ const repeatNtimes = '-n' in args ? args['-n'] : 1
 const untilPasses = '--until-passes' in args ? args['--until-passes'] : false
 const rerunFailedOnly =
   '--rerun-failed-only' in args ? args['--rerun-failed-only'] : false
+const forceContinue = '--force' in args ? args['--force'] : false
 
 console.log('%s will repeat Cypress command %d time(s)', name, repeatNtimes)
 
@@ -38,6 +40,12 @@ if (untilPasses) {
 if (rerunFailedOnly) {
   console.log('%s it only reruns specs which have failed', name)
 }
+
+if (forceContinue) {
+  console.log('%s will force continue through all iterations', name)
+}
+
+let anyTestFailed = false;
 
 /**
  * Quick and dirty deep clone
@@ -117,8 +125,10 @@ parseArguments()
             allRunOptions[k + 1].spec = failedSpecs
           } else {
             console.log('%s there were no failed specs', name)
-            console.log('%s exiting', name)
-            process.exit(0)
+            if (!forceContinue) {
+              console.log('%s exiting', name)
+              process.exit(0)
+            }
           }
         }
 
@@ -126,7 +136,10 @@ parseArguments()
           // failed to even run Cypress tests
           if (testResults.failures) {
             console.error(testResults.message)
-            return process.exit(testResults.failures)
+            anyTestFailed = true;
+            if (!forceContinue) {
+              return process.exit(testResults.failures)
+            }
           }
         }
 
@@ -141,14 +154,14 @@ parseArguments()
             process.exit(0)
           }
           console.error('%s run %d of %d failed', name, k + 1, n)
-          if (k === n - 1) {
+          if (!forceContinue && k === n - 1) {
             console.error('%s no more attempts left', name)
             process.exit(testResults.totalFailed)
           }
         } else {
           if (testResults.totalFailed) {
             console.error('%s run %d of %d failed', name, k + 1, n)
-            if (!rerunFailedOnly || isLastRun) {
+            if (!forceContinue && (!rerunFailedOnly || isLastRun)) {
               process.exit(testResults.totalFailed)
             }
           }
@@ -159,10 +172,17 @@ parseArguments()
     })
   })
   .then(() => {
-    console.log('***** finished %d run(s) successfully *****', repeatNtimes)
+    if (anyTestFailed) {
+      console.error('***** Some tests failed during the run(s) *****');
+      process.exit(1);
+    } else {
+      console.log('***** finished %d run(s) successfully *****', repeatNtimes);
+    }
   })
   .catch((e) => {
     console.log('error: %s', e.message)
     console.error(e)
-    process.exit(1)
+    if (!forceContinue) {
+      process.exit(1)
+    }
   })
