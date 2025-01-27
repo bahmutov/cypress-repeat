@@ -13,6 +13,7 @@
     "demo:twice": "node . run -n 2",
     "demo:until-passes": "node . run -n 2 --until-passes",
     "demo:rerun-failed-only": "node . run -n 2 --rerun-failed-only",
+    "demo:force": "node . run -n 2 --force",
     "semantic-release": "semantic-release"
   },
   "repository": {
